@@ -17,6 +17,7 @@ class Janela:
 
 
     def telaPrincipal(self):
+        self.limpar_tela()
         # Criando os frames para dividir a tela em dois
         tela_principal_parte1 = ttk.Frame(self.__janela)
         tela_principal_parte2 = ttk.Frame(self.__janela)
@@ -57,14 +58,70 @@ class Janela:
         tela_principal_parte2.grid(column= 1, row= 0, sticky=(E, N))
 
     def limpar_tela(self):
+        """
+            Função para limpar todos os elementos da tela
+        """
         widgets = self.__janela.grid_slaves()
         for widget in widgets:
             widget.destroy()
+    
+    def confirmarRacao(self, hora, minuto):
+        with open('Configurações.txt', 'r') as configuracoes_leitura:
+            atual = configuracoes_leitura.readlines()
+        with open('Configurações.txt', 'w') as configuracoes_escrever:
+            atual[0] = hora + '\n'
+            atual[1] = minuto + '\n'
+            for valor in atual:
+                configuracoes_escrever.write(valor)
+        self.telaPrincipal()
 
     def programarRacao(self):
+
         self.limpar_tela()
-        atual = ttk.Label(self.__janela, text= "Horário atual:")
-        pass
+
+        with open("Configurações.txt", "r") as configuracoes:
+            horarios = configuracoes.readlines()
+            horaAtual = horarios[0]
+            minAtual = horarios[1]
+
+        # Criando os frames para dividir a tela em dois
+        programarRacao1 = ttk.Frame(self.__janela)
+        programarRacao2 = ttk.Frame(self.__janela)
+
+        # Configurando tamanho das colunas para melhor posicionamento
+        programarRacao1.columnconfigure(0, minsize= 80)
+        programarRacao1.columnconfigure(1, minsize= 80)
+        programarRacao1.columnconfigure(2, minsize= 80)
+        programarRacao1.columnconfigure(3, minsize= 80)
+
+        programarRacao2.columnconfigure(0, minsize= 80)
+        programarRacao2.columnconfigure(1, minsize= 80)
+        programarRacao2.columnconfigure(2, minsize= 80)
+        programarRacao2.columnconfigure(3, minsize= 80)
+
+        atual = ttk.Label(programarRacao1, text= "Horário atual:")
+        hora_atual = ttk.Label(programarRacao1, text= horaAtual)
+        min_atual = ttk.Label(programarRacao1, text= minAtual)
+        comboboxTexto = ttk.Label(programarRacao2, text= "Novo Horário")
+        hora = StringVar()
+        minuto = StringVar()
+        horaCombo = ttk.Combobox(programarRacao2, textvariable= hora)
+        horaCombo['values'] = [i for i in range(0,24)]
+        horaCombo.state(['readonly'])
+        minutoCombo = ttk.Combobox(programarRacao2, textvariable= minuto)
+        minutoCombo['values'] = [i for i in range(0, 60)]
+        minutoCombo.state(['readonly'])
+        botao = ttk.Button(programarRacao1, text= "Confirmar", command= lambda: self.confirmarRacao(horaCombo.get(), minutoCombo.get()))
+
+        atual.grid(row= 0, column= 0)
+        hora_atual.grid(row= 1, column= 0)
+        min_atual.grid(row= 1, column= 1)
+        comboboxTexto.grid(row= 0, column= 0)
+        horaCombo.grid(row= 1, column= 0)
+        minutoCombo.grid(row= 1, column= 1)
+        botao.grid(row= 2, column= 2)
+        programarRacao1.grid(column= 0, row= 0, sticky=(W, N))
+        programarRacao2.grid(column= 1, row= 0, sticky=(E, N))
     
     def liberarRacao(self):
         pass
@@ -89,7 +146,7 @@ def verificacao_horario():
             if agora == horario_especifico: # verifica se o horário atual é igual ao horário específico
                 # realiza ação desejada
                 print("Horário específico alcançado!")
-            time.sleep(60) # espera 60 segundos antes de verificar novamente
+            time.sleep(10) # espera 60 segundos antes de verificar novamente
     
 # inicia a thread de verificação de horário
 thread_verificacao = threading.Thread(target=verificacao_horario)
