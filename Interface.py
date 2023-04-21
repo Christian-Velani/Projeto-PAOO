@@ -75,6 +75,16 @@ class Janela:
                 configuracoes_escrever.write(valor)
         self.telaPrincipal()
 
+    def confirmarAgua(self, hora, minuto):
+        with open('Configurações.txt', 'r') as configuracoes_leitura:
+            atual = configuracoes_leitura.readlines()
+        with open('Configurações.txt', 'w') as configuracoes_escrever:
+            atual[3] = hora + '\n'
+            atual[4] = minuto + '\n'
+            for valor in atual:
+                configuracoes_escrever.write(valor)
+        self.telaPrincipal()
+
     def programarRacao(self):
 
         self.limpar_tela()
@@ -88,6 +98,28 @@ class Janela:
         programarRacao1 = ttk.Frame(self.__janela)
         programarRacao2 = ttk.Frame(self.__janela)
 
+        atual = ttk.Label(programarRacao1, text= "Horário atual:")
+        hora_atual = ttk.Label(programarRacao1, text= horaAtual)
+        min_atual = ttk.Label(programarRacao1, text= minAtual)
+        comboboxTexto = ttk.Label(programarRacao2, text= "Novo Horário")
+        horaCombo = ttk.Combobox(programarRacao2)
+        horaCombo['values'] = [i for i in range(00,24)]
+        horaCombo.state(['readonly'])
+        horaCombo.set("00")
+        minutoCombo = ttk.Combobox(programarRacao2)
+        minutoCombo['values'] = [i for i in range(00, 60)]
+        minutoCombo.state(['readonly'])
+        minutoCombo.set("00")
+        botao = ttk.Button(programarRacao1, text= "Confirmar", command= lambda: self.confirmarRacao(horaCombo.get(), minutoCombo.get()))
+
+        atual.grid(row= 0, column= 1, columnspan= 2, pady= (182, 0))
+        hora_atual.grid(row= 1, column= 1)
+        min_atual.grid(row= 1, column= 2)
+        comboboxTexto.grid(row= 0, column= 0, columnspan= 2, pady= (182, 0))
+        horaCombo.grid(row= 1, column= 0)
+        minutoCombo.grid(row= 1, column= 1)
+        botao.grid(row= 2, column= 3, columnspan= 2)
+        
         # Configurando tamanho das colunas para melhor posicionamento
         programarRacao1.columnconfigure(0, minsize= 80)
         programarRacao1.columnconfigure(1, minsize= 80)
@@ -99,27 +131,6 @@ class Janela:
         programarRacao2.columnconfigure(2, minsize= 80)
         programarRacao2.columnconfigure(3, minsize= 80)
 
-        atual = ttk.Label(programarRacao1, text= "Horário atual:")
-        hora_atual = ttk.Label(programarRacao1, text= horaAtual)
-        min_atual = ttk.Label(programarRacao1, text= minAtual)
-        comboboxTexto = ttk.Label(programarRacao2, text= "Novo Horário")
-        hora = StringVar()
-        minuto = StringVar()
-        horaCombo = ttk.Combobox(programarRacao2, textvariable= hora)
-        horaCombo['values'] = [i for i in range(0,24)]
-        horaCombo.state(['readonly'])
-        minutoCombo = ttk.Combobox(programarRacao2, textvariable= minuto)
-        minutoCombo['values'] = [i for i in range(0, 60)]
-        minutoCombo.state(['readonly'])
-        botao = ttk.Button(programarRacao1, text= "Confirmar", command= lambda: self.confirmarRacao(horaCombo.get(), minutoCombo.get()))
-
-        atual.grid(row= 0, column= 0)
-        hora_atual.grid(row= 1, column= 0)
-        min_atual.grid(row= 1, column= 1)
-        comboboxTexto.grid(row= 0, column= 0)
-        horaCombo.grid(row= 1, column= 0)
-        minutoCombo.grid(row= 1, column= 1)
-        botao.grid(row= 2, column= 2)
         programarRacao1.grid(column= 0, row= 0, sticky=(W, N))
         programarRacao2.grid(column= 1, row= 0, sticky=(E, N))
     
@@ -127,6 +138,53 @@ class Janela:
         pass
 
     def programarAgua(self):
+
+        self.limpar_tela()
+
+        with open("Configurações.txt", "r") as configuracoes:
+            horarios = configuracoes.readlines()
+            horaAtual = horarios[0]
+            minAtual = horarios[1]
+
+        # Criando os frames para dividir a tela em dois
+        programarAgua1 = ttk.Frame(self.__janela)
+        programarAgua2 = ttk.Frame(self.__janela)
+
+        atual = ttk.Label(programarAgua1, text= "Horário atual:")
+        hora_atual = ttk.Label(programarAgua1, text= horaAtual)
+        min_atual = ttk.Label(programarAgua1, text= minAtual)
+        comboboxTexto = ttk.Label(programarAgua2, text= "Novo Horário")
+        horaCombo = ttk.Combobox(programarAgua2)
+        horaCombo['values'] = [i for i in range(00,24)]
+        horaCombo.state(['readonly'])
+        horaCombo.set("00")
+        minutoCombo = ttk.Combobox(programarAgua2)
+        minutoCombo['values'] = [i for i in range(00, 60)]
+        minutoCombo.state(['readonly'])
+        minutoCombo.set("00")
+        botao = ttk.Button(programarAgua1, text= "Confirmar", command= lambda: self.confirmarAgua(horaCombo.get(), minutoCombo.get()))
+
+        atual.grid(row= 0, column= 1, columnspan= 2, pady= (182, 0))
+        hora_atual.grid(row= 1, column= 1)
+        min_atual.grid(row= 1, column= 2)
+        comboboxTexto.grid(row= 0, column= 0, columnspan= 2, pady= (182, 0))
+        horaCombo.grid(row= 1, column= 0)
+        minutoCombo.grid(row= 1, column= 1)
+        botao.grid(row= 2, column= 3, columnspan= 2)
+        
+        # Configurando tamanho das colunas para melhor posicionamento
+        programarAgua1.columnconfigure(0, minsize= 80)
+        programarAgua1.columnconfigure(1, minsize= 80)
+        programarAgua1.columnconfigure(2, minsize= 80)
+        programarAgua1.columnconfigure(3, minsize= 80)
+
+        programarAgua2.columnconfigure(0, minsize= 80)
+        programarAgua2.columnconfigure(1, minsize= 80)
+        programarAgua2.columnconfigure(2, minsize= 80)
+        programarAgua2.columnconfigure(3, minsize= 80)
+
+        programarAgua1.grid(column= 0, row= 0, sticky=(W, N))
+        programarAgua2.grid(column= 1, row= 0, sticky=(E, N))
         pass
     
     def liberarAgua(self):
