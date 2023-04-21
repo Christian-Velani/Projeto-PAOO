@@ -1,7 +1,11 @@
 from tkinter import *
 from tkinter import ttk
+import datetime
+import threading
+import time
 
 class Janela:
+
     def __init__(self, janela):
         self.__janela = janela
         self.__janela.resizable(0, 0)
@@ -52,7 +56,14 @@ class Janela:
         tela_principal_parte1.grid(column= 0, row= 0, sticky=(W, N))
         tela_principal_parte2.grid(column= 1, row= 0, sticky=(E, N))
 
+    def limpar_tela(self):
+        widgets = self.__janela.grid_slaves()
+        for widget in widgets:
+            widget.destroy()
+
     def programarRacao(self):
+        self.limpar_tela()
+        atual = ttk.Label(self.__janela, text= "Horário atual:")
         pass
     
     def liberarRacao(self):
@@ -67,8 +78,26 @@ class Janela:
     def iniciar(self):
         self.__janela.mainloop()
 
+global executando
+executando = 1
+
+def verificacao_horario():
+        while executando == 1:
+            agora = datetime.datetime.now()
+            horario_especifico = datetime.time(13, 32) # define o horário específico
+            agora = datetime.time(int(agora.hour), int(agora.minute))
+            if agora == horario_especifico: # verifica se o horário atual é igual ao horário específico
+                # realiza ação desejada
+                print("Horário específico alcançado!")
+            time.sleep(60) # espera 60 segundos antes de verificar novamente
+    
+# inicia a thread de verificação de horário
+thread_verificacao = threading.Thread(target=verificacao_horario)
+thread_verificacao.start()
+
 
 janela = Janela(Tk())
 janela.telaPrincipal()
 janela.iniciar()
 
+executando = 0
